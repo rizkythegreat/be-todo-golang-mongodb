@@ -99,7 +99,7 @@ func updateTodo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = todo.UpdateTodo(id, todo)
+	updated, err := todo.UpdateTodo(id, todo)
 	if err != nil {
 		errorRes := Response{
 			Msg:  err.Error(),
@@ -117,10 +117,14 @@ func updateTodo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	res := Response{
-		Msg:  "Succesfully updated",
-		Code: 200,
+		Id:        updated.ID,
+		Task:      updated.Task,
+		Completed: updated.Completed,
+		CreatedAt: updated.CreatedAt,
+		UpdatedAt: updated.UpdatedAt,
+		Msg:       "Succesfully updated",
+		Code:      200,
 	}
-
 	jsonStr, err := json.Marshal(res)
 	if err != nil {
 		log.Fatal(err)

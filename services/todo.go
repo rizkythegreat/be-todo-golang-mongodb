@@ -90,7 +90,7 @@ func (t *Todo) InsertTodo() (primitive.ObjectID, error) {
 	return oid, nil
 }
 
-func (t *Todo) UpdateTodo(id string, entry Todo) (*mongo.UpdateResult, error) {
+func (t *Todo) UpdateTodo(id string, entry Todo) (*Todo, error) {
 	collection := returnCollectionPointer("todos")
 	mongoID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
@@ -105,17 +105,20 @@ func (t *Todo) UpdateTodo(id string, entry Todo) (*mongo.UpdateResult, error) {
 		}},
 	}
 
-	res, err := collection.UpdateOne(
+	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
+	var updatedTodo Todo
+
+	err = collection.FindOneAndUpdate(
 		context.Background(),
 		bson.M{"_id": mongoID},
 		update,
-	)
+		opts,
+	).Decode(&updatedTodo)
 	if err != nil {
-		log.Println(err)
 		return nil, err
 	}
 
-	return res, nil
+	return &updatedTodo, nil
 }
 
 func (t *Todo) DeleteTodo(id string) error {
