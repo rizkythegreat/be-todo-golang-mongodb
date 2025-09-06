@@ -39,7 +39,5 @@ func ConnectToMongo() (*mongo.Client, error) {
 		return nil, err
 	}
 	log.Println("Connected to MongoDB")
-	log.Println("DB_USER:", username)
-	log.Println("DB_PASSWORD:", password)
 	return client, nil
 }
